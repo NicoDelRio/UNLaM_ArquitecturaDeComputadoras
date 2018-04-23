@@ -1,0 +1,70 @@
+  ADDR B1 B2 B3 B4 C:\Users\Nicolas\Documents\UNLaM\Ingenieria en   PAGE       1
+
+                   ; 08-Tipo_Examen_DecMilUnidMilCentDecUnid_a_ASCII(con_BUCLE)
+
+                   ; Tomo un nmero de 16 bits y lo guardo en ASCII
+
+                   ; Declaro constantes
+                   RAM                     EQU             $0000
+                   ROM                     EQU             $8000
+
+                   ; Declaro variables
+                                           ORG             RAM
+                   NUMERO                  RMB             2
+                   DEC_MIL                 RMB             1
+                   UNI_MIL                 RMB             1
+                   CENTENA                 RMB             1
+                   DECENA                  RMB             1
+                   UNIDAD                  RMB             1
+
+                   ; Codigo
+                                           ORG             ROM
+  8000 DC 00                               LDD             NUMERO
+  8002 18 CE 00 06                         LDY             #UNIDAD         ; Y=
+.                  DIR UNIDAD
+  8006 CE 00 0A    BUCLE                   LDX             #0010
+  8009 02                                  IDIV                            ; D/
+.                  X->X , r->D (B=DIGITO)
+  800A CB 30                               ADDB            #'0'            ;
+.                  DIGITO + 0 (ASCII) = DIGITO EN ASCCI
+  800C 18 E7 00                            STAB            0,Y
+  800F 8F                                  XGDX                            ; X->
+.                  D , D->X
+  8010 18 09                               DEY                             ; Y-
+.                  1->Y
+  8012 18 8C 00 02                         CPY             #(DEC_MIL)      ; Y-
+.                  DEC_MIL. SI SON IGUALES Z=1, SINO Z=0.
+  8016 26 EE                               BNE             BUCLE           ; IF
+.                  (Z=0)
+  8018 CB 30                               ADDB            #'0'            ;
+.                  DEC_MIL + 0 (ASCII) = DEC_MIL EN ASCCI
+  801A 18 E7 00                            STAB            0,Y
+  801D 20 FE       FIN                     BRA             FIN
+
+                   ; Inicializo variables
+                                           ORG             NUMERO
+  0000 FF FF                               FDB             65535           ;
+.                  RANGO: 0 A 65535
+  0002 00 00 00 00                         DB              0,0,0,0,0       ;
+. 0006 00          PARA INICIALIZAR EN CERO VARIABLES (DEC_MIL A UNIDAD)
+
+
+
+
+
+
+
+  Symbol Table 
+
+  DEC_MIL            0002
+  RAM                0000
+  NUMERO             0000
+  DECENA             0005
+  UNI_MIL            0003
+  UNIDAD             0006
+  BUCLE              8006
+  CENTENA            0004
+  FIN                801D
+  Symbol Table     C:\Users\Nicolas\Documents\UNLaM\Ingenieria en   PAGE       2
+
+  ROM                8000

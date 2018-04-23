@@ -1,0 +1,78 @@
+  ADDR B1 B2 B3 B4 C:\Users\Nicolas\Documents\UNLaM\Ingenieria en   PAGE       1
+
+                   ; 19-Tipo_Examen_Promedio(sin_division)
+                   ; Se requiere un programa que permita calcular el promedio
+.                  entre cuatro numeros de 8 bits sin signo sin usar la
+.                  instruccion de division.
+                   ; Considerar datos las direcciones de memoria (consecutivas
+.                  entre si) en que se encuentran almacenados los numeros.
+
+                   ; SE PUEDE RESOLVER DE ESTA FORMA (CORRIENDO BITS A LA IZQ A
+.                  LA SUMA DE LOS NUMEROS, PORQUE LA CANT DE NUMEROS PARA
+.                  CALCULAR EL PROMEDIO
+                   ; ES DE BASE 2 (2^2=4). (SE PODRIA HACER SI SON 2,4,8,16 ETC
+.                  NUMEROS)
+
+
+                   RAM             EQU             $0000
+                   ROM             EQU             $8000
+                   DIR_1ERNUM      EQU             $0040
+                   CANT            EQU             16
+
+                                   ORG             RAM
+                   DIR_NUM         RMB             2                       ; DIR
+.                  1ER NUM
+                   SUMA            RMB             2
+                   ;PROMEDIO       RMB             2
+                   PROMEDIO        RMB             1
+
+                                   ORG             ROM
+  8000 DE 00                       LDX             DIR_NUM
+  8002 4F                          CLRA
+  8003 7F 00 02                    CLR             SUMA
+  8006 7F 00 03                    CLR             SUMA+1
+  8009 C6 10                       LDAB            #CANT
+  800B AB 00       BUCLE_SUMAS     ADDA            0,X
+  800D 25 10                       BCS             HAY_CARRY
+  800F 08          SIG             INX
+  8010 5A                          DECB
+  8011 26 F8                       BNE             BUCLE_SUMAS
+  8013 97 03                       STAA            SUMA+1
+  8015 DC 02                       LDD             SUMA
+  8017 04                          LSRD
+  8018 04                          LSRD
+  8019 04                          LSRD
+  801A 04                          LSRD
+                   ;               STD             PROMEDIO
+  801B D7 04                       STAB            PROMEDIO
+  801D 20 FE       FIN             BRA             FIN
+
+  801F 7C 00 02    HAY_CARRY       INC             SUMA
+  8022 20 EB                       BRA             SIG
+
+
+                   ; Inicializacion Variable/s
+                                   ORG             DIR_NUM
+  0000 00 40                       DW              DIR_1ERNUM
+                                   ORG             DIR_1ERNUM
+  0040 6A D3 43 A2                 DB              106,211,67,162,10,210,71,147,
+. 0044 0A D2 47 93 148,82,79,66,242,143,227,134       ; NUMEROS ENTRE 0 Y 255
+. 0048 94 64 4F 42
+. 004C F2 8F E3 86
+
+
+  Symbol Table 
+
+  DIR_1ERNUM         0040
+  SUMA               0002
+  Symbol Table     C:\Users\Nicolas\Documents\UNLaM\Ingenieria en   PAGE       2
+
+  RAM                0000
+  BUCLE_SUMAS        800B
+  CANT               0010
+  HAY_CARRY          801F
+  PROMEDIO           0004
+  FIN                801D
+  SIG                800F
+  DIR_NUM            0000
+  ROM                8000

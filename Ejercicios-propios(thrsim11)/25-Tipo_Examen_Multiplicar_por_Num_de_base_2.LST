@@ -1,0 +1,33 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ; 25-Tipo_Examen_Multiplicar_por_Num_de_base_2
+                   ; MULTIPLICAR POR 4
+
+                   RAM                     EQU             $0000
+                   ROM                     EQU             $8000
+
+
+                                           ORG             RAM
+                   NUM                     RMB             1
+                   RDO                     RMB             2
+
+                                           ORG             ROM
+  8000 4F                                  CLRA
+  8001 D6 00                               LDAB            NUM
+  8003 05                                  ASLD
+  8004 05                                  ASLD
+  8005 DD 01                               STD             RDO
+  8007 20 FE       FIN                     BRA             FIN
+
+                                           ORG             NUM
+  0000 96                                  DB              150             ; DE
+.                  0 A 255
+
+
+  Symbol Table 
+
+  RAM                0000
+  RDO                0001
+  FIN                8007
+  ROM                8000
+  NUM                0000

@@ -1,0 +1,52 @@
+  ADDR B1 B2 B3 B4 C:\Users\Nicolas\Documents\UNLaM\Ingenieria en   PAGE       1
+
+                   ; 21-Tipo_Examen_Convertir_Numero_de_BIN_a_DEC
+                   ; Archivo: Arquitectura de computadoras - Parcial_01.jpg
+                   ; Se desea convertir a decimal un numero binario de ocho bits
+.                  almacenado en la posicion de memoria $0000.
+                   ; El resultado debe quedar almacenado de la siguiente forma:
+                   ; Posicion $0001 = CENTENA
+                   ; Posicion $0002 = DECENA
+                   ; Posicion $0003 = UNIDAD
+
+
+                   RAM             EQU             $0000
+                   ROM             EQU             $8000
+
+
+
+                                   ORG             RAM
+                   NUM_BIN         RMB             1
+                   CENTENA         RMB             1
+                   DECENA          RMB             1
+                   UNIDAD          RMB             1
+
+                                   ORG             ROM
+  8000 4F                          CLRA
+  8001 D6 00                       LDAB            NUM_BIN
+  8003 CE 00 0A                    LDX             #10
+  8006 02                          IDIV
+  8007 D7 03                       STAB            UNIDAD
+  8009 8F                          XGDX
+  800A CE 00 0A                    LDX             #10
+  800D 02                          IDIV
+  800E D7 02                       STAB            DECENA
+  8010 8F                          XGDX
+  8011 D7 01                       STAB            CENTENA
+  8013 20 FE       FIN             BRA             FIN
+
+                   ;INICIALIZACION VARIABLE
+                                   ORG             NUM_BIN
+  0000 CB                          DB              203                     ;
+.                  ENTRE 0 Y 255
+
+
+  Symbol Table 
+
+  RAM                0000
+  DECENA             0002
+  UNIDAD             0003
+  CENTENA            0001
+  FIN                8013
+  NUM_BIN            0000
+  ROM                8000

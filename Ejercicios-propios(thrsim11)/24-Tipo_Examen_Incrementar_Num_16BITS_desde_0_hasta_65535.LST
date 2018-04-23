@@ -1,0 +1,21 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ; 24-Tipo_Examen_Incrementar_Num_16BITS_desde_0_hasta_65535
+
+
+                   RAM                     EQU             $0000
+                   ROM                     EQU             $8000
+
+                                           ORG             ROM
+  8000 CC 00 00                            LDD             #0
+  8003 C3 00 01    BUCLE                   ADDD            #1
+  8006 24 FB                               BHS             BUCLE
+  8008 20 FE       FIN                     BRA             FIN
+
+
+  Symbol Table 
+
+  RAM                0000
+  BUCLE              8003
+  FIN                8008
+  ROM                8000

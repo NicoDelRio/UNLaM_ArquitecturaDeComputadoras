@@ -1,0 +1,54 @@
+; 10-Tipo_Examen_Guardar_Num(16bits)_en_Base_N(con_BUCLE)
+
+; Convierte un numero de 16 bits en BASE N y guarda los digitos en RDO (16 reg)
+
+; DECLARACION DE CONSTANTES
+RAM			EQU	$0000
+DIR_RDO			EQU	$0010
+ROM			EQU	$8000
+BASE			EQU	16				; CASTEAR LA BASE EN CUAL GUARDARLO (2 A 16)
+
+; DECLARACION DE VARIABLES
+			ORG	RAM
+NUMERO			RMB	2				; 16 BITS
+			ORG	DIR_RDO
+RDO01			RMB	1
+RDO02			RMB	1
+RDO03			RMB	1
+RDO04			RMB	1
+RDO05			RMB	1
+RDO06			RMB	1
+RDO07			RMB	1
+RDO08			RMB	1
+RDO09			RMB	1
+RDO10			RMB	1
+RDO11			RMB	1
+RDO12			RMB	1
+RDO13			RMB	1
+RDO14			RMB	1
+RDO15			RMB	1
+RDO16			RMB	1
+
+
+; CODIGO
+			ORG	ROM
+			LDD	NUMERO				; D = NUMERO
+			LDY	#(RDO16)			; Y = DIR RDO16
+BUCLE			LDX	#(BASE)				; X = BASE
+			IDIV					; D/X->X , r->D
+			STAB	0,Y				; B->0,Y (B=Resto) (el resto max es 15, en base 16. entra en 1 byte).
+			XGDX					; X->D , D->X
+			DEY					; Y-1 -> Y
+			CPY	#(DIR_RDO)			; Y=DIR_RDO ? Z=0 : Z=1
+			BNE	BUCLE
+			STAB	0,Y
+
+FIN			BRA	FIN
+
+
+; INICIALIZACION
+			ORG	NUMERO
+			DW	65535				; RANGOS: 0 A 65535
+			ORG	DIR_RDO
+			DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0	; EN 0 TODOS LOS DIGITOS DE RDO
+;			DB	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF

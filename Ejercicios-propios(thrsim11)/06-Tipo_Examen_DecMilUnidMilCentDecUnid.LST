@@ -1,0 +1,76 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   * Dado un numero entero sin signo de 16 bits, informar:
+                   * decena de mil, unidad de mil, centenas, decenas y unidades
+.                  en cinco posiciones de memoria
+
+                   ;Etiquetas              ;Comando        ;Operando       ;
+.                  Comentario
+
+                   ; Declaracion de Constantes
+                   RAM                     EQU             $0000
+                   ROM                     EQU             $8000
+
+                   ; Declaracion de Variables
+                                           ORG             RAM
+                   NUMERO                  RMB             2               ;
+.                  Numero entero sin signo de 16 bits
+                   DEC_MIL                 RMB             1
+                   UNI_MIL                 RMB             1
+                   CENTENA                 RMB             1
+                   DECENA                  RMB             1
+                   UNIDAD                  RMB             1
+
+                   ; Codigo
+                                           ORG             ROM
+  8000 DC 00                               LDD             NUMERO          ; D =
+.                  NUMERO (16 BITS)
+  8002 CE 00 0A                            LDX             #10             ; X =
+.                  10
+  8005 02                                  IDIV                            ; D/
+.                  X->X , R->D (B = UNIDAD)
+  8006 D7 06                               STAB            UNIDAD
+  8008 8F                                  XGDX                            ; X->
+.                  D, D->X
+  8009 CE 00 0A                            LDX             #10             ; X =
+.                  10
+  800C 02                                  IDIV                            ; D/
+.                  X->X , R->D (B = DECENA)
+  800D D7 05                               STAB            DECENA
+  800F 8F                                  XGDX                            ; X->
+.                  D, D->X
+  8010 CE 00 0A                            LDX             #10             ; X =
+.                  10
+  8013 02                                  IDIV                            ; D/
+.                  X->X , R->D (B = CENTENA)
+  8014 D7 04                               STAB            CENTENA
+  8016 8F                                  XGDX                            ; X->
+.                  D, D->X
+  8017 CE 00 0A                            LDX             #10             ; X =
+.                  10
+  801A 02                                  IDIV                            ; D/
+.                  X->X , R->D (B = UNI_MIL)
+  801B D7 03                               STAB            UNI_MIL
+  801D 8F                                  XGDX                            ; X->
+.                  D (B = DEC_MIL), D->X
+  801E D7 02                               STAB            DEC_MIL
+  8020 20 FE       FIN                     BRA             FIN
+
+                   ; Inicializacion Variable/s
+                                           ORG             NUMERO
+  0000 FF FF                               DW              65535           ;
+.                  RANGO: 0 A 65535 (numero entero sin signo de 16 bits)
+
+  Symbol Table 
+
+  DEC_MIL            0002
+  RAM                0000
+  Symbol Table     thrass11.tmp                                     PAGE       2
+
+  NUMERO             0000
+  DECENA             0005
+  UNI_MIL            0003
+  UNIDAD             0006
+  CENTENA            0004
+  FIN                8020
+  ROM                8000

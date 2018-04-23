@@ -1,0 +1,74 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ; 27-Tipo_Examen_Conversion_AIKEN_a_BCD
+                   ; Escribir un programa para el 68HC11 que permita convertir
+.                  un elemento numrico expresado en AIKEN a su equivalente BCD.
+                   ; Se conocen como datos la posicin de memoria en que se
+.                  almacena el dato original y la posicin de memoria en que debe
+.                  almacenarse
+                   ; el resultado.
+                   ; En el cdigo BCD natural, los pesos son: 8  4  2  1, en el
+.                  cdigo Aiken la distribucin es: 2  4  2  1.
+                   ; Ver la simetra en el cdigo Aiken corresponiente a los
+.                  decimales: 4 y 5, 3 y 6, 2 y 7, 1 y 8, 0 y 9.
+                   ; DECIMAL       AIKEN
+                   ;               2421
+                   ;       O       0000
+                   ;       1       0001
+                   ;       2       0010
+                   ;       3       0011
+                   ;       4       0100
+                   ;       5       1011 (LE SUMA 6 A BCD)
+                   ;       6       1100
+                   ;       7       1101
+                   ;       8       1110
+                   ;       9       1111
+
+                                           ORG             $0000
+                   DATO                    RMB             1
+                   RESULTADO               RMB             1
+
+
+                                           ORG             $8000
+  8000 96 00                               LDAA            DATO
+  8002 85 08                               BITA            #%1000          ; Z=0
+.                  SI (0 <= DATO <=4) / Z=1 SI (5 <= DATO <=9)
+  8004 27 02                               BEQ             NO_RESTA
+  8006 80 06                               SUBA            #6
+  8008 97 01       NO_RESTA                STAA            RESULTADO
+  800A 20 FE       FIN                     BRA             FIN
+
+
+                                           ORG             DATO            ;
+.                  AIKEN  BCD
+                   ;                       DB              %0000           ;$00
+.                  $00
+                   ;                       DB              %0001           ;$01
+.                  $01
+                   ;                       DB              %0010           ;$02
+.                  $02
+                   ;                       DB              %0011           ;$03
+.                  $03
+                   ;                       DB              %0100           ;$04
+.                  $04
+                   ;                       DB              %1011           ;$0B
+.                  $05
+                   ;                       DB              %1100           ;$0C
+.                  $06
+                   ;                       DB              %1101           ;$0D
+.                  $07
+                   ;                       DB              %1110           ;$0E
+.                  $08
+  0000 0F                                  DB              %1111           ;$0F
+.                  $09
+
+
+
+  Symbol Table 
+  Symbol Table     thrass11.tmp                                     PAGE       2
+
+
+  RESULTADO          0001
+  NO_RESTA           8008
+  FIN                800A
+  DATO               0000

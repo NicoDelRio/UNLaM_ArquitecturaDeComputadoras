@@ -1,0 +1,102 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ; 10-Tipo_Examen_Guardar_Num(16bits)_en_Base_N(con_BUCLE)
+
+                   ; Convierte un numero de 16 bits en BASE N y guarda los
+.                  digitos en RDO (16 reg)
+
+                   ; DECLARACION DE CONSTANTES
+                   RAM                     EQU     $0000
+                   DIR_RDO                 EQU     $0010
+                   ROM                     EQU     $8000
+                   BASE                    EQU     16
+.                  ; CASTEAR LA BASE EN CUAL GUARDARLO (2 A 16)
+
+                   ; DECLARACION DE VARIABLES
+                                           ORG     RAM
+                   NUMERO                  RMB     2
+.                  ; 16 BITS
+                                           ORG     DIR_RDO
+                   RDO01                   RMB     1
+                   RDO02                   RMB     1
+                   RDO03                   RMB     1
+                   RDO04                   RMB     1
+                   RDO05                   RMB     1
+                   RDO06                   RMB     1
+                   RDO07                   RMB     1
+                   RDO08                   RMB     1
+                   RDO09                   RMB     1
+                   RDO10                   RMB     1
+                   RDO11                   RMB     1
+                   RDO12                   RMB     1
+                   RDO13                   RMB     1
+                   RDO14                   RMB     1
+                   RDO15                   RMB     1
+                   RDO16                   RMB     1
+
+
+                   ; CODIGO
+                                           ORG     ROM
+  8000 DC 00                               LDD     NUMERO
+.                  ; D = NUMERO
+  8002 18 CE 00 1F                         LDY     #(RDO16)
+.                  ; Y = DIR RDO16
+  8006 CE 00 10    BUCLE                   LDX     #(BASE)
+.                  ; X = BASE
+  8009 02                                  IDIV
+.                  ; D/X->X , r->D
+  800A 18 E7 00                            STAB    0,Y
+.                  ; B->0,Y (B=Resto) (el resto max es 15, en base 16. entra en
+.                  1 byte).
+  800D 8F                                  XGDX
+.                  ; X->D , D->X
+  800E 18 09                               DEY
+.                  ; Y-1 -> Y
+  8010 18 8C 00 10                         CPY     #(DIR_RDO)
+.                  ; Y=DIR_RDO ? Z=0 : Z=1
+  8014 26 F0                               BNE     BUCLE
+  8016 18 E7 00                            STAB    0,Y
+
+  8019 20 FE       FIN                     BRA     FIN
+
+
+                   ; INICIALIZACION
+                                           ORG     NUMERO
+  0000 FF FF                               DW      65535
+.                  ; RANGOS: 0 A 65535
+                                           ORG     DIR_RDO
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       2
+
+  0010 00 00 00 00                         DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+. 0014 00 00 00 00 0,0 ; EN 0 TODOS LOS DIGITOS DE RDO
+. 0018 00 30 00 00
+. 001C 00 00 00 00
+                   ;                       DB      $FF,$FF,$FF,$FF,$FF,$FF,$FF,
+.                  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,
+.                  $FF,$FF,$FF,$FF,$FF
+
+  Symbol Table 
+
+  RAM                0000
+  NUMERO             0000
+  DIR_RDO            0010
+  BASE               0010
+  BUCLE              8006
+  RDO01              0010
+  RDO02              0011
+  RDO03              0012
+  RDO04              0013
+  RDO05              0014
+  RDO06              0015
+  RDO07              0016
+  RDO08              0017
+  RDO09              0018
+  RDO10              0019
+  FIN                8019
+  RDO11              001A
+  RDO12              001B
+  RDO13              001C
+  RDO14              001D
+  RDO15              001E
+  RDO16              001F
+  ROM                8000

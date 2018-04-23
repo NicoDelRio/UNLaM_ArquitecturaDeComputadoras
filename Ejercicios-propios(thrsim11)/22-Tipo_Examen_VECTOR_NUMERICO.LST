@@ -1,0 +1,92 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ; 22-Tipo_Examen_VECTOR_NUMERICO
+                   ; Archivo: Arquitectura de computadoras - Parcial_02.jpg
+                   ; Se tiene un vector almacenado en memoria, formado por 256
+.                  elementos numericos signados (de -128 a 127), del que se
+.                  conocen la cantidad
+                   ; de elementos (almacenada en CANT) y la direccion de memoria
+.                  en la que se encuentran el primer elemento (almacenada en
+.                  PUNT).
+                   ; Se requiere un programa que determine:
+                   ; - La cantidad de elementos del vector que sean a la vez
+.                  negatovos y multiplos de cuatro.
+                   ; - La cantidad de elementos nulos.
+                   ; - Las direciones de memoria en que se encuentran los
+.                  elementos nulos
+
+
+                   RAM                     EQU             $0000
+                   ROM                     EQU             $8000
+                   DIR_VECTOR              EQU             $0030
+                   DIR_VECTOR_NULOS        EQU             $0060
+                   CANT                    EQU             20
+
+                                           ORG             RAM
+                   PUNT                    RMB             2
+                   PUNT_NULOS              RMB             2
+                   CANT_NEG_MULT4          RMB             1
+                   CANT_NULOS              RMB             1
+
+                                           ORG             ROM
+  8000 DE 00                               LDX             PUNT
+  8002 18 DE 02                            LDY             PUNT_NULOS
+  8005 7F 00 04                            CLR             CANT_NEG_MULT4
+  8008 7F 00 05                            CLR             CANT_NULOS
+  800B C6 14                               LDAB            #CANT
+  800D 5D                                  TSTB
+  800E 27 0E                               BEQ             FIN
+  8010 A6 00       BUCLE                   LDAA            0,X
+  8012 27 0C                               BEQ             ES_CERO
+.                  ; ?Z=1
+  8014 2C 04                               BGE             SIG
+.                  ; N(+)V=0 (ES POSITIVO)
+  8016 85 03                               BITA            #%0011
+  8018 27 12                               BEQ             ES_NEG_MULT4
+  801A 08          SIG                     INX
+  801B 5A                                  DECB
+  801C 26 F2                               BNE             BUCLE
+  801E 20 FE       FIN                     BRA             FIN
+
+
+  8020 7C 00 05    ES_CERO                 INC             CANT_NULOS
+  8023 CD EF 00                            STX             0,Y
+  8026 18 08                               INY
+  8028 18 08                               INY
+  802A 20 EE                               BRA             SIG
+
+  802C 7C 00 04    ES_NEG_MULT4            INC             CANT_NEG_MULT4
+  802F 20 E9                               BRA             SIG
+
+
+
+                   ; INICIALIZACION VECTOR
+                                           ORG             PUNT
+  0000 00 30                               DW              DIR_VECTOR
+                                           ORG             PUNT_NULOS
+  0002 00 60                               DW              DIR_VECTOR_NULOS
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       2
+
+                                           ORG             DIR_VECTOR
+  0030 03 F8 00 0C                         DB              3,-8,0,12,15,-24,0,
+. 0034 0F E8 00 18 24,27,-40,33,0,39,-56,45,0,-68,54,-76,0
+. 0038 1B 66 21 00
+. 003C 27 C8 2D 00
+. 0040 BC 36 B4 00
+
+  Symbol Table 
+
+  RAM                0000
+  PUNT               0000
+  CANT_NULOS         0005
+  CANT               0014
+  ES_NEG_MULT4       802C
+  DIR_VECTOR_NULOS   0060
+  DIR_VECTOR         0030
+  ES_CERO            8020
+  BUCLE              8010
+  FIN                801E
+  CANT_NEG_MULT4     0004
+  SIG                801A
+  PUNT_NULOS         0002
+  ROM                8000

@@ -1,0 +1,66 @@
+  ADDR B1 B2 B3 B4 C:\Users\Nicolas\Documents\UNLaM\Ingenieria en   PAGE       1
+
+                   ; 19-Tipo_Examen_Promedio(sin_division)
+                   ; Se requiere un programa que permita calcular el promedio
+.                  entre cuatro numeros de 8 bits sin signo sin usar la
+.                  instruccion de division.
+                   ; Considerar datos las direcciones de memoria (consecutivas
+.                  entre si) en que se encuentran almacenados los numeros.
+
+
+                   RAM             EQU             $0000
+                   ROM             EQU             $8000
+                   DIR_1ERNUM      EQU             $0040
+                   CANT            EQU             4
+
+                                   ORG             RAM
+                   DIR_NUM         RMB             2                       ; DIR
+.                  1ER NUM
+                   SUMA            RMB             2
+                   ;PROMEDIO       RMB             2
+                   PROMEDIO        RMB             1
+
+                                   ORG             ROM
+  8000 DE 00                       LDX             DIR_NUM
+  8002 4F                          CLRA
+  8003 7F 00 02                    CLR             SUMA
+  8006 7F 00 03                    CLR             SUMA+1
+  8009 C6 04                       LDAB            #CANT
+  800B AB 00       BUCLE_SUMAS     ADDA            0,X
+  800D 25 0E                       BCS             HAY_CARRY
+  800F 08          SIG             INX
+  8010 5A                          DECB
+  8011 26 F8                       BNE             BUCLE_SUMAS
+  8013 97 03                       STAA            SUMA+1
+  8015 DC 02                       LDD             SUMA
+  8017 04                          LSRD
+  8018 04                          LSRD
+                   ;               STD             PROMEDIO
+  8019 D7 04                       STAB            PROMEDIO
+  801B 20 FE       FIN             BRA             FIN
+
+  801D 7C 00 02    HAY_CARRY       INC             SUMA
+  8020 20 ED                       BRA             SIG
+
+
+                   ; Inicializacion Variable/s
+                                   ORG             DIR_NUM
+  0000 00 40                       DW              DIR_1ERNUM
+                                   ORG             DIR_1ERNUM
+  0040 EE FE F9 EF                 DB              238,254,249,239         ; 4
+.                  NUMEROS ENTRE 0 Y 255
+
+
+  Symbol Table 
+
+  DIR_1ERNUM         0040
+  SUMA               0002
+  RAM                0000
+  BUCLE_SUMAS        800B
+  CANT               0004
+  HAY_CARRY          801D
+  PROMEDIO           0004
+  FIN                801B
+  SIG                800F
+  DIR_NUM            0000
+  ROM                8000

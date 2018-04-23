@@ -1,0 +1,134 @@
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       1
+
+                   ; 15-Ordenar un vector(8 BITS) (DE MAY A MEN SIN SIGNO) (de
+.                  $FF a $00)
+
+                   ; CONSTANTES
+                   RAM                     EQU             $0000
+                   ROM                     EQU             $8000
+
+                   ; VARIABLES
+                                           ORG             RAM
+                   DIR_INI                 RMB             2
+                   DIR_FIN                 RMB             2
+                   HUBO_INTERCAMBIO        RMB             1
+
+                   ; CODIGO
+                                           ORG             ROM
+                   BUCLE
+  8000 DE 00                               LDX             DIR_INI
+  8002 9C 02                               CPX             DIR_FIN
+.                  ; COMPARA (X=DIR_INI) CON DIR_FIN. SI SON IGUALES Z=1
+  8004 27 1C                               BEQ             FUERA_BUCLE
+.                  ; ? Z = 1. AL SER DIR_INI == DIR_FIN, NO HAY NADA QUE ORDENAR
+.                  Y SALE.
+  8006 7F 00 04                            CLR             HUBO_INTERCAMBIO
+                   BUCLE_INTERNO
+  8009 EC 00                               LDD             0,X
+  800B 11                                  CBA
+.                  ; A-B. SI N=0 A>B
+                   ;                       BHS             INTERCAMBIAR
+.                  ; ? C = 0               (ORDENA DE < A > SIN SIGNO, IGUALES
+.                  INTERCAMBIA)
+                   ;                       BHI             INTERCAMBIAR
+.                  ; ? C + Z = 0           (ORDENA DE < A > SIN SIGNO, IGUALES
+.                  NO INTERCAMBIA)
+                   ;                       BGT             INTERCAMBIAR
+.                  ; ? Z + (N (+) V) = 0   (ORDENA DE < A > CON SIGNO, IGUALES
+.                  NO INTERCAMBIA)
+                   ;                       BGE             INTERCAMBIAR
+.                  ; ? N (+) V = 0         (ORDENA DE < A > CON SIGNO, IGUALES
+.                  INTERCAMBIA)
+  800C 25 16                               BCS             INTERCAMBIAR
+.                  ; ? C = 1               (ORDENA DE > A < SIN SIGNO, IGUALES
+.                  NO INTERCAMBIA)
+                   ;                       BLS             INTERCAMBIAR
+.                  ; ? C + Z = 1           (ORDENA DE > A < SIN SIGNO, IGUALES
+.                  INTERCAMBIA)
+                   ;                       BLE             INTERCAMBIAR
+.                  ; ? Z + (N (+) V) = 1   (ORDENA DE > A < CON SIGNO, IGUALES
+.                  INTERCAMBIA)
+                   ;                       BLT             INTERCAMBIAR
+.                  ; ? N (+) V = 1         (ORDENA DE > A < CON SIGNO, IGUALES
+.                  NO INTERCAMBIA)
+                   SIG
+  800E 08                                  INX
+  800F 9C 02                               CPX             DIR_FIN
+.                  ; SI X=DIR_FIN -> Z=1
+  8011 26 F6                               BNE             BUCLE_INTERNO
+  8013 7D 00 04                            TST             HUBO_INTERCAMBIO
+.                  ; TESTEA HUBO_INTERCAMBIO
+  8016 27 0A                               BEQ             FUERA_BUCLE
+.                  ; ? Z = 1. SI EN TODA UNA RECORRIDA NO HUBO INTERCAMBIO, YA
+.                  ESTA ORDENADO Y SALE.
+  8018 18 DE 02                            LDY             DIR_FIN
+  801B 18 09                               DEY
+  801D 18 DF 02                            STY             DIR_FIN
+.                  ; EN LA ULTIMA POSICION YA QUEDO ORDENADO, Y POR ENDE SE
+  ADDR B1 B2 B3 B4 thrass11.tmp                                     PAGE       2
+
+.                  RECORRE UNA MENOS.
+  8020 20 DE                               BRA             BUCLE
+                   FUERA_BUCLE
+  8022 20 FE       FIN                     BRA             FIN
+
+                   INTERCAMBIAR
+  8024 A7 01                               STAA            1,X
+.                  ; A->M+1
+  8026 E7 00                               STAB            0,X
+.                  ; B->M
+  8028 7D 00 04                            TST             HUBO_INTERCAMBIO
+.                  ; SE TESTEA PARA VER SI ESTA EN CERO
+  802B 26 E1                               BNE             SIG
+.                  ; SI YA NO ESTA EN 0, SALE DE LA SUBRUTINA
+  802D 7C 00 04                            INC             HUBO_INTERCAMBIO
+.                  ; DE 0 LO INCREMENTA A 1. NO SE INCREMENTA DIRECTAMENTE
+.                  PORQUE
+  8030 20 DC                               BRA             SIG
+.                  ; SI SE INCREMENTARA 256 (O UNO DE ESOS MULTIPLOS), QUEDARIA
+.                  EN $00.
+
+
+
+                   ; INICIALIZACION DE VARIABLES
+                   ;                       ORG             $0000
+                   ;                       DB              $FF,$FF,$FF,$FF,$FF,
+.                  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,
+.                  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+                                           ORG             DIR_INI
+  0000 00 10                               DW              $0010
+                                           ORG             DIR_FIN
+  0002 00 1F                               DW              ($0010-1)+16
+.                  ; +"CANT DE ELEMENTOS"
+
+                   ; CARGAR EL VECTOR
+                                           ORG             $0010
+                   ;                       DB              $10,$50,$30,$80,$A0,
+.                  $00,$40,$60,$20,$70,$90,$B0,$C0,$D0,$F0,$E0
+                   ;                       DB              $00,$10,$20,$30,$40,
+.                  $50,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0
+                   ;                       DB              $00,$00,$00,$00,$00,
+.                  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                   ;                       DB              $10
+  0010 FF FF FF FF                         DB              $FF,$FF,$FF,$FF,$FF,
+. 0014 FF FF FF FF $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,
+. 0018 FF 66 FF FF $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+. 001C FF FF FF FF
+. 0020 FF FF FF 66
+. 0024 FF FF FF FF
+. 0028 FF FF FF FF
+. 002C FF 20 FF
+
+  Symbol Table 
+
+  RAM                0000
+  HUBO_INTERCAMBIO   0004
+  INTERCAMBIAR       8024
+  FUERA_BUCLE        8022
+  BUCLE              8000
+  DIR_FIN            0002
+  FIN                8022
+  SIG                800E
+  DIR_INI            0000
+  BUCLE_INTERNO      8009
+  ROM                8000
